@@ -1,7 +1,7 @@
 # Address Mux in SystemVerilog
 
 ## Overview
-This project implements an Address Mux (Multiplexer) in SystemVerilog, used to select between the instruction address and operand address based on a control signal. It also includes a testbench for functional verification.
+A SystemVerilog implementation of a simple FPGA memory module is presented, featuring a single bidirectional data port. The design is accompanied by a testbench for thorough functional verification.
 
 ## Project Structure
 ```
