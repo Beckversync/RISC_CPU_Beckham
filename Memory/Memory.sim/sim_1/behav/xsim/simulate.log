@@ -1,0 +1,9 @@
+Time resolution is 1 ps
+Time=                   0 | rst=1 | en=0 | rw=0 | addr=00 | data=zz | instr_addr=00
+Time=               20000 | rst=0 | en=1 | rw=0 | addr=00 | data=zz | instr_addr=00
+Time=               30000 | rst=0 | en=1 | rw=0 | addr=05 | data=55 | instr_addr=00
+Time=               35000 | rst=0 | en=1 | rw=0 | addr=05 | data=55 | instr_addr=01
+Time=               40000 | rst=0 | en=1 | rw=0 | addr=05 | data=zz | instr_addr=01
+Time=               50000 | rst=0 | en=1 | rw=1 | addr=05 | data=zz | instr_addr=01
+Time=               70000 | rst=0 | en=1 | rw=1 | addr=00 | data=zz | instr_addr=01
+$finish called at time : 130 ns : File "C:/Users/Dell/Memory/Memory.srcs/sim_1/new/tb_Memory.v" Line 115
