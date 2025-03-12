@@ -1,5 +1,5 @@
 namespace eval ::optrace {
-  variable script "C:/Users/Dell/ADD_MUX/ADD_MUX.runs/impl_1/ADD_MUX.tcl"
+  variable script "C:/Users/Dell/RISC_CPU/ADD_MUX/ADD_MUX.runs/impl_1/ADD_MUX.tcl"
   variable category "vivado_impl"
 }
 
@@ -112,13 +112,13 @@ OPTRACE "create in-memory project" START { }
   set_param project.singleFileAddWarning.threshold 0
 OPTRACE "create in-memory project" END { }
 OPTRACE "set parameters" START { }
-  set_property webtalk.parent_dir C:/Users/Dell/ADD_MUX/ADD_MUX.cache/wt [current_project]
-  set_property parent.project_path C:/Users/Dell/ADD_MUX/ADD_MUX.xpr [current_project]
-  set_property ip_output_repo C:/Users/Dell/ADD_MUX/ADD_MUX.cache/ip [current_project]
+  set_property webtalk.parent_dir C:/Users/Dell/RISC_CPU/ADD_MUX/ADD_MUX.cache/wt [current_project]
+  set_property parent.project_path C:/Users/Dell/RISC_CPU/ADD_MUX/ADD_MUX.xpr [current_project]
+  set_property ip_output_repo C:/Users/Dell/RISC_CPU/ADD_MUX/ADD_MUX.cache/ip [current_project]
   set_property ip_cache_permissions {read write} [current_project]
 OPTRACE "set parameters" END { }
 OPTRACE "add files" START { }
-  add_files -quiet C:/Users/Dell/ADD_MUX/ADD_MUX.runs/synth_1/ADD_MUX.dcp
+  add_files -quiet C:/Users/Dell/RISC_CPU/ADD_MUX/ADD_MUX.runs/synth_1/ADD_MUX.dcp
 OPTRACE "read constraints: implementation" START { }
 OPTRACE "read constraints: implementation" END { }
 OPTRACE "read constraints: implementation_pre" START { }

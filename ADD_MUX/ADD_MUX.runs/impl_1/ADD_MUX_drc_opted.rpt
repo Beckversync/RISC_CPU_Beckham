@@ -1,7 +1,7 @@
 Copyright 1986-2022 Xilinx, Inc. All Rights Reserved. Copyright 2022-2024 Advanced Micro Devices, Inc. All Rights Reserved.
 ---------------------------------------------------------------------------------------------------------------------------------------------
 | Tool Version : Vivado v.2024.2 (win64) Build 5239630 Fri Nov 08 22:35:27 MST 2024
-| Date         : Tue Mar 11 13:44:30 2025
+| Date         : Wed Mar 12 22:51:42 2025
 | Host         : DESKTOP-FEGLDB1 running 64-bit major release  (build 9200)
 | Command      : report_drc -file ADD_MUX_drc_opted.rpt -pb ADD_MUX_drc_opted.pb -rpx ADD_MUX_drc_opted.rpx
 | Design       : ADD_MUX

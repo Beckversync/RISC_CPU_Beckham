@@ -5,4 +5,4 @@ Time = 10000 | select = 1 | instr_address = 10101 | operand_address = 01010 | ad
 Time = 20000 | select = 0 | instr_address = 11100 | operand_address = 00011 | address_out = 11100
 Time = 30000 | select = 1 | instr_address = 11100 | operand_address = 00011 | address_out = 00011
 Kết thúc testbench.
-$finish called at time : 40 ns : File "C:/Users/Dell/RISC_CPU/ADD_MUX/ADD_MUX.srcs/sim_1/new/tb_ADD_MUX.v" Line 70
+$finish called at time : 40 ns : File "C:/Users/Dell/RISC_CPU/ADD_MUX/ADD_MUX.srcs/sim_1/new/tb_Address Mux.sv" Line 70
