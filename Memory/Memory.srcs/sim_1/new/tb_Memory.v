@@ -1,124 +1,132 @@
-`timescale 1ns / 1ps
-//////////////////////////////////////////////////////////////////////////////////
-// Company: 
-// Engineer: 
-// 
-// Create Date: 03/11/2025 03:01:56 PM
-// Design Name: 
-// Module Name: tb_Memory
-// Project Name: 
-// Target Devices: 
-// Tool Versions: 
-// Description: 
-// 
-// Dependencies: 
-// 
-// Revision:
-// Revision 0.01 - File Created
-// Additional Comments:
-// 
-//////////////////////////////////////////////////////////////////////////////////
-
-
-module tb_Memory;
-  // Định nghĩa tham số
-    parameter DATA_WIDTH = 8;
-    parameter ADDR_WIDTH = 5;
-
-    // Định nghĩa tín hiệu cho module
-    reg clk;
-    reg rst;
-    reg enable;
-    reg read_write;              // 0: ghi, 1: đọc
-    reg load_instruction_flag;
-    reg [ADDR_WIDTH-1:0] address;
-
-    // Testbench sẽ điều khiển cổng bidirectional khi ở chế độ ghi.
-    // Khi không ghi, testbench đặt giá trị high-impedance.
-    reg drive_data;              // Khi drive_data = 1, testbench sẽ điều khiển dữ liệu
-    reg [DATA_WIDTH-1:0] tb_data;
-    wire [DATA_WIDTH-1:0] data;
+    `timescale 1ns / 1ps
+    //////////////////////////////////////////////////////////////////////////////////
+    // Company: 
+    // Engineer: 
+    // 
+    // Create Date: 03/11/2025 03:01:56 PM
+    // Design Name: 
+    // Module Name: tb_Memory
+    // Project Name: 
+    // Target Devices: 
+    // Tool Versions: 
+    // Description: 
+    // 
+    // Dependencies: 
+    // 
+    // Revision:
+    // Revision 0.01 - File Created
+    // Additional Comments:
+    // 
+    //////////////////////////////////////////////////////////////////////////////////
     
-    // Tri-state driver từ testbench:
-    assign data = (drive_data) ? tb_data : {DATA_WIDTH{1'bz}};
     
-    // Xuất ra chỉ số lệnh (instr_address) từ module
-    wire [ADDR_WIDTH-1:0] instr_address;
-    
-    // Instantiate module memory
-    Memory #(
-        .DATA_WIDTH(DATA_WIDTH),
-        .ADDR_WIDTH(ADDR_WIDTH)
-    ) uut (
-        .data(data),
-        .instr_address(instr_address),
-        .clk(clk),
-        .rst(rst),
-        .enable(enable),
-        .read_write(read_write),
-        .load_instruction_flag(load_instruction_flag),
-        .address(address)
+ module tb_memory_5x8;
+    // Tín hiệu testbench
+    reg         clk;
+    reg         rst;
+    reg         sel;
+    reg         rd;
+    reg         wr;
+    reg         ld_ir;
+    reg  [4:0]  address;
+
+    // Mô phỏng bus 2 chiều: sử dụng data_reg và cờ drive_data để điều khiển
+    reg  [7:0]  data_reg;    // Giá trị sẽ được ghi ra bus
+    reg         drive_data;  // Cờ cho biết testbench có đang drive bus hay không
+
+    // Tín hiệu kết nối với module
+    wire [7:0]  data_e;      // Bus 2 chiều
+    wire [7:0]  data_out;    // Đầu ra từ bộ nhớ (có thể là lệnh hoặc dữ liệu)
+
+    // Kết nối tới module memory_5x8 
+    memory_5x8 uut (
+        .clk      (clk),
+        .rst      (rst),
+        .sel      (sel),
+        .rd       (rd),
+        .wr       (wr),
+        .ld_ir    (ld_ir),
+        .data_e   (data_e),
+        .address  (address),
+        .data_out (data_out)
     );
-    
-    // Sinh xung clock: chu kỳ 10ns (5ns HIGH, 5ns LOW)
+
+    // Cơ chế ba trạng thái cho bus data_e
+    // Khi drive_data = 1 => bus được drive bởi data_reg, ngược lại thì bus ở trạng thái Z
+    assign data_e = drive_data ? data_reg : 8'bz;
+
+    // Tạo xung clock với chu kỳ 10ns (tần số 100MHz)
     initial begin
         clk = 0;
         forever #5 clk = ~clk;
     end
 
-    // Phần test: khởi tạo và điều khiển các tín hiệu
+    // Kịch bản test cho module
     initial begin
         // Khởi tạo các tín hiệu
-        rst = 1;
-        enable = 0;
-        read_write = 0;         // Mặc định ở chế độ ghi
-        load_instruction_flag = 0;
-        address = 0;
-        drive_data = 0;         // Ban đầu không drive dữ liệu
-        tb_data = 0;
-        
-        // Giữ reset trong vài chu kỳ rồi giải phóng
-        #20;
-        rst = 0;
-        enable = 1;
-        
-        // --- Thao tác ghi ---
-        // Ghi giá trị 0x55 vào địa chỉ 5
-        #10;
-        read_write = 0;         // Chuyển sang chế độ ghi
-        drive_data = 1;         // Testbench bắt đầu drive dữ liệu
-        address = 5;
-        tb_data = 8'h55;        // Ghi 0x55
-        load_instruction_flag = 1; // Kiểm tra việc tăng instr_address nếu cần
-        #10;                   // Đợi một chu kỳ clock
-        
-        // Dừng drive dữ liệu sau khi ghi
+        rst        = 1;
+        sel        = 0;
+        rd         = 0;
+        wr         = 0;
+        ld_ir      = 0;
         drive_data = 0;
-        load_instruction_flag = 0;
-        
-        // --- Thao tác đọc ---
-        // Đọc tại địa chỉ 5, kết quả mong đợi là 0x55
-        #10;
-        read_write = 1;         // Chuyển sang chế độ đọc
-        address = 5;
-        // Testbench không drive dữ liệu khi đang đọc
-        drive_data = 0;
-        #10;
-        
-        // Đọc thêm một giá trị từ địa chỉ 0 (nội dung đã được khởi tạo trong reset)
-        #10;
-        address = 0;
-        #10;
-        
-        // Kết thúc mô phỏng sau một khoảng thời gian
-        #50;
-        $finish;
-    end
+        data_reg   = 8'd0;
+        address    = 5'd0;
 
-    // Giám sát tín hiệu: in ra các giá trị quan trọng theo thời gian
-    initial begin
-        $monitor("Time=%t | rst=%b | en=%b | rw=%b | addr=%h | data=%h | instr_addr=%h", 
-                 $time, rst, enable, read_write, address, data, instr_address);
+        // Bước 1: Reset module
+        #10;
+        rst = 0;   // Kết thúc reset
+
+        // Bước 2: Ghi dữ liệu vào bộ nhớ tại địa chỉ 0
+        sel        = 1;       // Chọn module memory
+        wr         = 1;       // Cho phép ghi
+        rd         = 0;       // Không đọc
+        address    = 5'd0;    // Địa chỉ 0
+        data_reg   = 8'hAA;   // Dữ liệu cần ghi (0xAA)
+        drive_data = 1;       // Drive bus với data_reg
+        #10;                  // Đợi 1 chu kỳ clock
+        #10;                  // Thêm chu kỳ để hoàn tất ghi
+
+        // Dừng ghi: Ngừng drive bus và tắt tín hiệu ghi
+        wr         = 0;
+        drive_data = 0;
+        #10;
+
+        // Bước 3: Đọc dữ liệu từ địa chỉ 0
+        rd         = 1;       // Cho phép đọc
+        // Sau cạnh clock tới, module sẽ lấy dữ liệu từ mem[address]
+        #10;
+        #10;
+        $display("Read from address 0: data_e = 0x%h, data_out = 0x%h", data_e, data_out);
+
+        // Bước 4: Kích hoạt ld_ir để nạp giá trị từ bộ nhớ vào data_out
+        ld_ir = 1;
+        #10;
+        ld_ir = 0;
+        #10;
+        $display("After ld_ir, data_out = 0x%h", data_out);
+
+        // Bước 5: Thử ghi dữ liệu vào địa chỉ 1
+        rd         = 0;
+        wr         = 1;
+        address    = 5'd1;
+        data_reg   = 8'h55;   // Dữ liệu mới (0x55)
+        drive_data = 1;
+        #10;
+        #10;
+
+        // Đọc lại dữ liệu tại địa chỉ 1
+        wr         = 0;
+        drive_data = 0;
+        rd         = 1;
+        address    = 5'd1;
+        #10;
+        #10;
+        $display("Read from address 1: data_e = 0x%h, data_out = 0x%h", data_e, data_out);
+
+        // Kết thúc mô phỏng
+        #10;
+        $stop;
     end
 
 endmodule

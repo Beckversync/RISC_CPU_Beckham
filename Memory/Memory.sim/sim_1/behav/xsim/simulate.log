@@ -1,0 +1,9 @@
+Time resolution is 1 ps
+Read mem[0]: data_out=aa, inB=aa (expect AA)
+Read mem[1]: data_out=55, inB=55 (expect 55)
+Read mem[2]: data_out=f0, inB=f0 (expect F0)
+$finish called at time : 170 ns : File "C:/Users/Dell/RISC_CPU/Memory/Memory.srcs/sim_1/new/tb_Memory.v" Line 167
+Could not open the .mem file xsim.dir/memory_5x8_tb_behav/xsim.mem
+Command failed: Simulator command interrupted.
+
+Simulation engine not responding
