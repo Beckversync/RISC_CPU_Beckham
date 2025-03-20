@@ -21,25 +21,30 @@
     
     
  module tb_memory_5x8;
-    // Tín hiệu testbench
-    reg         clk;
-    reg         rst;
-    reg         sel;
-    reg         rd;
-    reg         wr;
-    reg         ld_ir;
-    reg  [4:0]  address;
 
-    // Mô phỏng bus 2 chiều: sử dụng data_reg và cờ drive_data để điều khiển
-    reg  [7:0]  data_reg;    // Giá trị sẽ được ghi ra bus
-    reg         drive_data;  // Cờ cho biết testbench có đang drive bus hay không
+    // Thông số
+    parameter DATA_WIDTH = 8;
+    parameter ADDR_WIDTH = 5;
 
-    // Tín hiệu kết nối với module
-    wire [7:0]  data_e;      // Bus 2 chiều
-    wire [7:0]  data_out;    // Đầu ra từ bộ nhớ (có thể là lệnh hoặc dữ liệu)
+    // Tín hiệu mô phỏng
+    reg                       clk;      
+    reg                       rst;      
+    reg                       sel;      
+    reg                       rd;       
+    reg                       wr;       
+    reg                       ld_ir;    
+    reg                       data_e;   
+    reg   [ADDR_WIDTH-1:0]    address;  
+    reg   [DATA_WIDTH-1:0]    data_in;  
+    wire  [DATA_WIDTH-1:0]    data_out; 
 
-    // Kết nối tới module memory_5x8 
-    memory_5x8 uut (
+    // -----------------------
+    //  Instance DUT (Device Under Test)
+    // -----------------------
+    memory_5x8 #(
+        .DATA_WIDTH(DATA_WIDTH),
+        .ADDR_WIDTH(ADDR_WIDTH)
+    ) dut (
         .clk      (clk),
         .rst      (rst),
         .sel      (sel),
@@ -48,84 +53,108 @@
         .ld_ir    (ld_ir),
         .data_e   (data_e),
         .address  (address),
+        .data_in  (data_in),
         .data_out (data_out)
     );
 
-    // Cơ chế ba trạng thái cho bus data_e
-    // Khi drive_data = 1 => bus được drive bởi data_reg, ngược lại thì bus ở trạng thái Z
-    assign data_e = drive_data ? data_reg : 8'bz;
-
-    // Tạo xung clock với chu kỳ 10ns (tần số 100MHz)
+    // -----------------------
+    //  Tạo clock 10ns (tần số 100 MHz)
+    // -----------------------
     initial begin
         clk = 0;
         forever #5 clk = ~clk;
     end
 
-    // Kịch bản test cho module
+    // -----------------------
+    //  Khối test chính
+    // -----------------------
     initial begin
-        // Khởi tạo các tín hiệu
-        rst        = 1;
-        sel        = 0;
-        rd         = 0;
-        wr         = 0;
-        ld_ir      = 0;
-        drive_data = 0;
-        data_reg   = 8'd0;
-        address    = 5'd0;
+        // Khởi tạo
+        rst      = 1;
+        sel      = 0;
+        rd       = 0;
+        wr       = 0;
+        ld_ir    = 0;
+        data_e   = 0;
+        address  = 0;
+        data_in  = 0;
 
-        // Bước 1: Reset module
-        #10;
-        rst = 0;   // Kết thúc reset
+        // Giữ reset cao trong 20 ns
+        #20;
+        rst = 0;
 
-        // Bước 2: Ghi dữ liệu vào bộ nhớ tại địa chỉ 0
-        sel        = 1;       // Chọn module memory
-        wr         = 1;       // Cho phép ghi
-        rd         = 0;       // Không đọc
-        address    = 5'd0;    // Địa chỉ 0
-        data_reg   = 8'hAA;   // Dữ liệu cần ghi (0xAA)
-        drive_data = 1;       // Drive bus với data_reg
-        #10;                  // Đợi 1 chu kỳ clock
-        #10;                  // Thêm chu kỳ để hoàn tất ghi
+        // ---------------------------------------------------------
+        // Bắt đầu ghi/đọc thử
+        // ---------------------------------------------------------
 
-        // Dừng ghi: Ngừng drive bus và tắt tín hiệu ghi
-        wr         = 0;
-        drive_data = 0;
-        #10;
+        // B1: Ghi 0xAA vào địa chỉ 0
+        sel      = 1;
+        wr       = 1;
+        data_e   = 1;         // cho phép dữ liệu
+        address  = 5'b00000;
+        data_in  = 8'hAA;     // dữ liệu cần ghi
+        #10;                  // chờ 1 chu kỳ clock
 
-        // Bước 3: Đọc dữ liệu từ địa chỉ 0
-        rd         = 1;       // Cho phép đọc
-        // Sau cạnh clock tới, module sẽ lấy dữ liệu từ mem[address]
-        #10;
-        #10;
-        $display("Read from address 0: data_e = 0x%h, data_out = 0x%h", data_e, data_out);
-
-        // Bước 4: Kích hoạt ld_ir để nạp giá trị từ bộ nhớ vào data_out
-        ld_ir = 1;
-        #10;
-        ld_ir = 0;
-        #10;
-        $display("After ld_ir, data_out = 0x%h", data_out);
-
-        // Bước 5: Thử ghi dữ liệu vào địa chỉ 1
-        rd         = 0;
-        wr         = 1;
-        address    = 5'd1;
-        data_reg   = 8'h55;   // Dữ liệu mới (0x55)
-        drive_data = 1;
-        #10;
+        // Kết thúc ghi
+        wr     = 0;
+        data_e = 0;
         #10;
 
-        // Đọc lại dữ liệu tại địa chỉ 1
-        wr         = 0;
-        drive_data = 0;
-        rd         = 1;
-        address    = 5'd1;
+        // B2: Ghi 0x55 vào địa chỉ 1
+        wr      = 1;
+        data_e  = 1;
+        address = 5'b00001;
+        data_in = 8'h55;
         #10;
-        #10;
-        $display("Read from address 1: data_e = 0x%h, data_out = 0x%h", data_e, data_out);
 
-        // Kết thúc mô phỏng
+        // Kết thúc ghi
+        wr     = 0;
+        data_e = 0;
         #10;
+
+        // B3: Đọc dữ liệu từ địa chỉ 0
+        rd      = 1;
+        data_e  = 1;
+        address = 5'b00000;
+        #10;  
+        $display("Time=%0t, Read address=0, data_out=%h", $time, data_out);
+
+        // Kết thúc đọc
+        rd     = 0;
+        data_e = 0;
+        #10;
+
+        // B4: Đọc dữ liệu từ địa chỉ 1
+        rd      = 1;
+        data_e  = 1;
+        address = 5'b00001;
+        #10;  
+        $display("Time=%0t, Read address=1, data_out=%h", $time, data_out);
+
+        // Kết thúc đọc
+        rd     = 0;
+        data_e = 0;
+        #10;
+
+        // B5: Thử nạp IR (ld_ir=1) khi đọc
+        rd      = 1;
+        data_e  = 1;
+        ld_ir   = 1;
+        address = 5'b00000; // Lấy giá trị ở địa chỉ 0
+        #10;
+        $display("Time=%0t, (ld_ir=1) data_out=%h", $time, data_out);
+
+        // Kết thúc đọc + ld_ir
+        rd     = 0;
+        data_e = 0;
+        ld_ir  = 0;
+        #10;
+
+        // Đưa sel về 0 để "nghỉ"
+        sel = 0;
+        #20;
+
+        // Dừng mô phỏng
         $stop;
     end
 
