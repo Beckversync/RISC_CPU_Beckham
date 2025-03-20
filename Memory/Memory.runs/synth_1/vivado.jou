@@ -3,12 +3,12 @@
 # SW Build 5239630 on Fri Nov 08 22:35:27 MST 2024
 # IP Build 5239520 on Sun Nov 10 16:12:51 MST 2024
 # SharedData Build 5239561 on Fri Nov 08 14:39:27 MST 2024
-# Start of session at: Thu Mar 20 12:54:16 2025
-# Process ID         : 19356
-# Current directory  : C:/Users/Dell/RISC_CPU/Memory/Memory.runs/synth_1
-# Command line       : vivado.exe -log memory_5x8.vds -product Vivado -mode batch -messageDb vivado.pb -notrace -source memory_5x8.tcl
-# Log file           : C:/Users/Dell/RISC_CPU/Memory/Memory.runs/synth_1/memory_5x8.vds
-# Journal file       : C:/Users/Dell/RISC_CPU/Memory/Memory.runs/synth_1\vivado.jou
+# Start of session at: Tue Mar 11 15:03:32 2025
+# Process ID         : 760
+# Current directory  : C:/Users/Dell/Memory/Memory.runs/synth_1
+# Command line       : vivado.exe -log Memory.vds -product Vivado -mode batch -messageDb vivado.pb -notrace -source Memory.tcl
+# Log file           : C:/Users/Dell/Memory/Memory.runs/synth_1/Memory.vds
+# Journal file       : C:/Users/Dell/Memory/Memory.runs/synth_1\vivado.jou
 # Running On         : DESKTOP-FEGLDB1
 # Platform           : Windows Server 2016 or Windows 10
 # Operating System   : 22631
@@ -17,8 +17,8 @@
 # CPU Physical cores : 14
 # CPU Logical cores  : 20
 # Host memory        : 16849 MB
-# Swap memory        : 6442 MB
-# Total Virtual      : 23291 MB
-# Available Virtual  : 9040 MB
+# Swap memory        : 5368 MB
+# Total Virtual      : 22217 MB
+# Available Virtual  : 5490 MB
 #-----------------------------------------------------------
-source memory_5x8.tcl -notrace
+source Memory.tcl -notrace
