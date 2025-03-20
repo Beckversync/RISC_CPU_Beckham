@@ -25,7 +25,7 @@ else
 fi
 export LD_LIBRARY_PATH
 
-HD_PWD='C:/Users/Dell/Memory/Memory.runs/synth_1'
+HD_PWD='C:/Users/Dell/RISC_CPU/Memory/Memory.runs/synth_1'
 cd "$HD_PWD"
 
 HD_LOG=runme.log
@@ -41,4 +41,4 @@ EAStep()
      fi
 }
 
-EAStep vivado -log Memory.vds -m64 -product Vivado -mode batch -messageDb vivado.pb -notrace -source Memory.tcl
+EAStep vivado -log memory_5x8.vds -m64 -product Vivado -mode batch -messageDb vivado.pb -notrace -source memory_5x8.tcl
