@@ -38,3 +38,5 @@ WARNING: [filemgmt 56-199] Attempt to get parsing info during refresh. "On-the-f
 WARNING: [filemgmt 56-199] Attempt to get parsing info during refresh. "On-the-fly" syntax checking information may be incorrect. [C:\Users\Dell\RISC_CPU\Memory\Memory.srcs\sim_1\new\tb_Memory.v:]
 WARNING: [filemgmt 56-199] Attempt to get parsing info during refresh. "On-the-fly" syntax checking information may be incorrect. [C:\Users\Dell\RISC_CPU\Memory\Memory.srcs\sim_1\new\tb_Memory.v:]
 ERROR: [Common 17-180] Spawn failed: No error
+exit
+INFO: [Common 17-206] Exiting Vivado at Fri Mar 21 00:00:48 2025...
